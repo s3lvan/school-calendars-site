@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>School Calendars</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Style -->
+ <link rel="stylesheet" href="style.css">
+
+
+
+
+</head>
+<body>
+
+  <header>
+    <img src="temp4cj.png" alt="ULTRA Education" class="logo">
+    <h1>School Calendar Downloads</h1>
+  </header>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="🔍 Search for a school...">
+  </div>
+
+
+  <ul id="schoolList">
+    {% for school in schools %}
+    <li class="school-card" data-name="{{ school.name | lower }}" data-links="{{ school.tooltip }}" data-search="{{ school.search_blob }}">
+
+      <a href="{{ school.link }}" target="_blank"><span class="school-name">{{ school.name }}</span></a>
+      <span>{{ school.event_count }} events</span>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <!--
+ 
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase();
+    const items = document.querySelectorAll(".school-card");
+
+    items.forEach(item => {
+      const name = item.dataset.name;
+      const links = item.dataset.links;
+      const match = name.includes(query) || links.includes(query);
+      item.style.display = match ? "block" : "none";
+    });
+  });
+</script>
+ -->
+
+
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+
+  function highlightMatch(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  }
+
+  searchInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase();
+    const items = document.querySelectorAll(".school-card");
+
+    items.forEach(item => {
+      const nameRaw = item.dataset.name;
+      const links = item.dataset.links || "";
+      const searchBlob = item.dataset.search || ""
+
+/*      const match = nameRaw.includes(query) || links.includes(query); */
+      const match = searchBlob.includes(query);
+
+      item.style.display = match ? "block" : "none";
+
+      const nameSpan = item.querySelector(".school-name");
+      const rawText = nameSpan.dataset.original || nameSpan.textContent;
+      nameSpan.dataset.original = rawText;
+
+      if (query && match) {
+        nameSpan.innerHTML = highlightMatch(rawText, query);
+      } else {
+        nameSpan.innerHTML = rawText;
+      }
+    });
+  });
+
+</script>
+
+
+
+</body>
+</html>
